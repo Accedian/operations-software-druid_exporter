@@ -47,6 +47,12 @@ class DruidCollector(object):
                 'query/cache/total/evictions': None,
                 'query/cache/total/timeouts': None,
                 'query/cache/total/errors': None,
+                # Forked additions
+                'query/success/count': None,
+                'query/failed/count': None,
+                'query/interrupted/count': None,
+                #'query/intervalChunk/time': ['id', 'status', 'chunkInterval'],
+                #'query/node/ttfb': ['id', 'status', 'server'],
             },
             'historical': {
                 'query/time': ['dataSource'],
@@ -62,7 +68,12 @@ class DruidCollector(object):
                 'segment/max': None,
                 'segment/used': ['tier', 'dataSource'],
                 'segment/scan/pending': None,
-            },
+                # Forked Additions
+                'query/segmentAndCache/time': ['id', 'segment'],
+                'query/success/count': None,
+                'query/failed/count': None,
+                'query/interrupted/count': None,
+           },
             'coordinator': {
                 'segment/count': ['dataSource'],
                 'segment/assigned/count': ['tier'],
@@ -147,6 +158,11 @@ class DruidCollector(object):
             'ingest/persists/failed',
             'ingest/handoff/failed',
             'ingest/handoff/count',
+            # Forked additions
+            'query/success/count',
+            'query/failed/count',
+            'query/interrupted/count',
+
         ])
 
     @staticmethod
@@ -225,6 +241,16 @@ class DruidCollector(object):
             'query/cache/total/errors': GaugeMetricFamily(
                'druid_' + daemon + '_query_cache_errors_count',
                'Number of cache errors.'),
+            # Forked additions
+            'query/success/count': GaugeMetricFamily(
+               'druid_' + daemon + '_query_success_count',
+               'Number of successful queries.'),
+            'query/failed/count': GaugeMetricFamily(
+               'druid_' + daemon + '_query_failed_count',
+               'Number of failed queries.'),
+            'query/interrupted/count': GaugeMetricFamily(
+               'druid_' + daemon + '_query_interrupted_count',
+               'Number of interrupted queries.'),
             }
 
     def _get_historical_counters(self):
@@ -243,6 +269,16 @@ class DruidCollector(object):
             'segment/scan/pending': GaugeMetricFamily(
                'druid_historical_segment_scan_pending',
                'Number of segments in queue waiting to be scanned.'),
+            # Forked additions
+            #'query/success/count': GaugeMetricFamily(
+            #   'druid_historical_query_success_count',
+            #   'Number of successful queries.'),
+            #'query/failed/count': GaugeMetricFamily(
+            #   'druid_historical_query_failed_count',
+            #   'Number of failed queries.'),
+            #'query/interrupted/count': GaugeMetricFamily(
+            #    'druid_historical_query_interrupted_count',
+            #    'Number of interrupted queries.'),
             }
 
     def _get_coordinator_counters(self):
