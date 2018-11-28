@@ -73,6 +73,7 @@ class DruidCollector(object):
                 'query/success/count': None,
                 'query/failed/count': None,
                 'query/interrupted/count': None,
+                'query/segment/time': ['id','segment'],
            },
             'coordinator': {
                 'segment/count': ['dataSource'],
@@ -162,7 +163,7 @@ class DruidCollector(object):
             'query/success/count',
             'query/failed/count',
             'query/interrupted/count',
-
+            'query/segment/time',
         ])
 
     @staticmethod
@@ -266,9 +267,14 @@ class DruidCollector(object):
                'druid_historical_segment_used_bytes',
                'Bytes used for served segments.',
                labels=['tier', 'datasource']),
+            'query/segment/time': GaugeMetricFamily(
+               'druid_historical_query_segment_time',
+               'Milliseconds taken to query individual segment. Includes time to page in the segment from disk.',
+               labels=['id', 'segment']),
             'segment/scan/pending': GaugeMetricFamily(
                'druid_historical_segment_scan_pending',
-               'Number of segments in queue waiting to be scanned.'),
+               'Number of segments in queue waiting to be scanned.',
+               labels=['segment']),
             # Forked additions
             #'query/success/count': GaugeMetricFamily(
             #   'druid_historical_query_success_count',
